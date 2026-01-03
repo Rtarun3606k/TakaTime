@@ -22,8 +22,8 @@ jobs:
             go mod init github.com/Rtarun3606k/TakaTime
           fi
           # Download the missing mongo drivers
-          go get go.mongodb.org/mongo-driver/mongo
-          go get go.mongodb.org/mongo-driver/bson
+          go get go.mongodb.org/mongo-driver/v2/mongo
+          go get go.mongodb.org/mongo-driver/v2/bson
           go mod tidy
 
       - name: Build Linux Binary
