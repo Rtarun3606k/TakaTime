@@ -24,7 +24,7 @@ jobs:
           # Download the missing mongo drivers
           go get go.mongodb.org/mongo-driver/v2/mongo
           go get go.mongodb.org/mongo-driver/v2/bson
-          go mod tidy
+          
 
       - name: Build Linux Binary
         run: |
