@@ -3,12 +3,13 @@ name: Build & Release Binaries
 on:
   release:
     types: [created]
-  permissions:
-      contents: write
+
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
 
