@@ -3,6 +3,9 @@ name: Build Linux Binary
 on:
   release:
     types: [created]
+    
+permissions:    
+  contents: write
 
 jobs:
   build-linux:
