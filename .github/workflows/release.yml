@@ -3,6 +3,8 @@ name: Build & Release Binaries
 on:
   release:
     types: [created]
+  permissions:
+      contents: write
 
 jobs:
   build-and-release:
