@@ -26,9 +26,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Package extension
-        run: npx vsce package
-
       - name: Publish to VS Marketplace
         run: npx vsce publish
         env:
