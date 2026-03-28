@@ -7,8 +7,54 @@ on:
     paths:
       - "vscodePlugin/Takatime/package.json"
 
+<<<<<<< HEAD
+=======
+permissions:
+  contents: read
+
+>>>>>>> 5689ade (Added version verifier)
 jobs:
+  check_version:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.compare.outputs.changed }}
+    defaults:
+      run:
+        working-directory: vscodePlugin/Takatime
+
+    steps:
+      - name: Checkout previous
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.before }}
+        continue-on-error: true
+
+      - name: Get old version
+        id: old_version
+        run: |
+          if [ -f "./package.json" ]; then
+            echo "value=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+          else
+            echo "value=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout current
+        uses: actions/checkout@v4
+
+      - name: Get actual version and compare
+        id: compare
+        run: |
+          NEW=$(node -p "require('./package.json').version")
+          OLD=${{ steps.old_version.outputs.value }}
+          if [ "$NEW" != "$OLD" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
   publish:
+    needs: check_version
+    if: needs.check_version.outputs.changed == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
