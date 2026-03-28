@@ -9,6 +9,7 @@
   "engines": {
     "vscode": "^1.80.0"
   },
+  "repository": "https://github.com/Rtarun3606k/TakaTime",
   "categories": [
     "Other",
     "Visualization"
