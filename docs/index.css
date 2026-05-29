@@ -1,5 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;700&display=swap");
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   background-color: #0d1117;
   color: #c9d1d9;
@@ -10,6 +16,7 @@ body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
 }
 
 @keyframes slideUpFade {
