@@ -170,8 +170,7 @@ func GetTimeStats(client *mongo.Client) (types.TimeGridStruct, error) {
 
 	// 2. Define Time Boundaries
 	now := time.Now()
-	yesterdayStart := now.AddDate(0, 0, -1).Truncate(24 * time.Hour)
-	yesterdayEnd := yesterdayStart.Add(24 * time.Hour)
+	yesterdayStart, yesterdayEnd := getYesterdayBounds(now)
 	weekAgo := now.AddDate(0, 0, -7)
 	monthAgo := now.AddDate(0, 0, -30)
 
@@ -179,8 +178,8 @@ func GetTimeStats(client *mongo.Client) (types.TimeGridStruct, error) {
 	var logsYesterday, logsWeek, logsMonth []LogTime
 
 	for _, log := range allLogs {
-		// Yesterday
-		if log.Timestamp.After(yesterdayStart) && log.Timestamp.Before(yesterdayEnd) {
+		// Yesterday: inclusive of start, exclusive of end
+		if !log.Timestamp.Before(yesterdayStart) && log.Timestamp.Before(yesterdayEnd) {
 			logsYesterday = append(logsYesterday, log)
 		}
 		// Last 7 Days
@@ -211,6 +210,15 @@ func formatDuration(seconds float64) string {
 		return fmt.Sprintf("%dh %dm", h, m)
 	}
 	return fmt.Sprintf("%dm", m)
+}
+
+// getYesterdayBounds returns the start and end boundaries for yesterday in the
+// local timezone of the given reference time. Start is inclusive, end is exclusive.
+func getYesterdayBounds(now time.Time) (start, end time.Time) {
+	loc := now.Location()
+	start = time.Date(now.Year(), now.Month(), now.Day()-1, 0, 0, 0, 0, loc)
+	end = time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, loc)
+	return
 }
 
 // CHANGED: Now accepts []LogTime instead of []struct{...}
