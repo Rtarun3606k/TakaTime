@@ -170,7 +170,7 @@ func GetTimeStats(client *mongo.Client) (types.TimeGridStruct, error) {
 
 	// 2. Define Time Boundaries
 	now := time.Now()
-	yesterdayStart := now.AddDate(0, 0, -1).Truncate(24 * time.Hour)
+	yesterdayStart := time.Date(now.Year(), now.Month(), now.Day()-1, 0, 0, 0, 0, now.Location())
 	yesterdayEnd := yesterdayStart.Add(24 * time.Hour)
 	weekAgo := now.AddDate(0, 0, -7)
 	monthAgo := now.AddDate(0, 0, -30)
