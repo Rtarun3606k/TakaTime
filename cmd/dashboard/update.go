@@ -235,18 +235,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				sqliteDB, _ := db.InitSQLite()
 				if sqliteDB != nil {
 					db.SaveConfig(sqliteDB, types.CacheData{Theme: selectedThemeName})
-					db.SaveDashboardCache(sqliteDB, types.CacheData{
-						Languages:    m.LanguageListStats,
-						Projects:     m.ProjectListStats,
-						OS:           m.OsListStats,
-						Editors:      m.editorListStats,
-						TimeStats:    m.TimeStats,
-						Activity:     m.ActivityData,
-						Streak:       m.Streak,
-						TodayHours:   m.TodayHours,
-						AverageHours: m.AverageHours,
-						DailyHistory: m.DailyHistory,
-					})
+					db.ClearDashboardCache(sqliteDB)
+					// db.SaveDashboardCache(sqliteDB, types.CacheData{
+					// 	Languages:    m.LanguageListStats,
+					// 	Projects:     m.ProjectListStats,
+					// 	OS:           m.OsListStats,
+					// 	Editors:      m.editorListStats,
+					// 	TimeStats:    m.TimeStats,
+					// 	Activity:     m.ActivityData,
+					// 	Streak:       m.Streak,
+					// 	TodayHours:   m.TodayHours,
+					// 	AverageHours: m.AverageHours,
+					// 	DailyHistory: m.DailyHistory,
+					// })
 					sqliteDB.Close()
 				}
 
@@ -255,8 +256,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.updateViewport()
 				}
 				return m, nil
+				return m, nil
 			}
-			return m, nil
 		}
 
 		switch msg.String() {
