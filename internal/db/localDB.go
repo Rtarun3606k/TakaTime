@@ -17,11 +17,13 @@ import (
 func InitSQLite() (*sql.DB, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
+		log.Printf("error: failed to get user home directory: %v", err)
 		return nil, err
 	}
 
 	dbDir := filepath.Join(home, ".takatime")
 	if err := os.MkdirAll(dbDir, 0755); err != nil {
+		log.Printf("error: failed to create database directory: %v", err)
 		return nil, err
 	}
 
@@ -30,6 +32,7 @@ func InitSQLite() (*sql.DB, error) {
 	// Open the DB connection
 	sqliteDB, err := sql.Open("sqlite", dbPath)
 	if err != nil {
+		log.Printf("error: failed to open SQLite database: %v", err)
 		return nil, err
 	}
 
@@ -52,6 +55,7 @@ func InitSQLite() (*sql.DB, error) {
 	);`
 
 	if _, err := sqliteDB.Exec(query); err != nil {
+		log.Printf("error: failed to create tables: %v", err)
 		return nil, err
 	}
 
@@ -62,9 +66,13 @@ func InitSQLite() (*sql.DB, error) {
 func Enqueue(entry types.LogEntry, db *sql.DB) error {
 	jsonData, err := json.Marshal(entry)
 	if err != nil {
+		log.Printf("error: failed to marshal log entry: %v", err)
 		return err
 	}
 	_, err = db.Exec("INSERT INTO offline_logs (data) VALUES (?)", string(jsonData))
+	if err != nil {
+		log.Printf("error: failed to insert log entry: %v", err)
+	}
 	return err
 }
 
@@ -151,6 +159,7 @@ func SyncQueue(mongoURI string, db *sql.DB) {
 func SaveDashboardCache(db *sql.DB, data types.CacheData) error {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
+		log.Printf("error: failed to marshal cache data: %v", err)
 		return err
 	}
 
@@ -158,12 +167,18 @@ func SaveDashboardCache(db *sql.DB, data types.CacheData) error {
 	// It just overwrites the 'main' ID every time.
 	query := `INSERT OR REPLACE INTO dashboard_cache (id, data, updated_at) VALUES ('main', ?, ?)`
 	_, err = db.Exec(query, string(jsonData), time.Now())
+	if err != nil {
+		log.Printf("error: failed to save dashboard cache: %v", err)
+	}
 	return err
 }
 
 // ClearDashboardCache deletes the cached dashboard data, forcing a fresh fetch
 func ClearDashboardCache(db *sql.DB) error {
 	_, err := db.Exec("DELETE FROM dashboard_cache WHERE id = 'main'")
+	if err != nil {
+		log.Printf("error: failed to clear dashboard cache: %v", err)
+	}
 	return err
 }
 
@@ -175,17 +190,20 @@ func GetDashboardCache(db *sql.DB) (*types.CacheData, error) {
 	// Fetch the single 'main' row
 	err := db.QueryRow("SELECT data, updated_at FROM dashboard_cache WHERE id = 'main'").Scan(&rawJSON, &updatedAt)
 	if err != nil {
+		log.Printf("error: failed to get dashboard cache: %v", err)
 		return nil, err // Will return error if no cache exists yet
 	}
 
 	//  THE 5-MINUTE RULE
 	if time.Since(updatedAt) > 5*time.Minute {
+		log.Printf("dashboard cache expired (last updated at %v)", updatedAt)
 		return nil, fmt.Errorf("cache expired") // Force a fresh fetch
 	}
 
 	// Unmarshal the valid cache
 	var cache types.CacheData
 	if err := json.Unmarshal([]byte(rawJSON), &cache); err != nil {
+		log.Printf("error: failed to unmarshal cache data: %v", err)
 		return nil, err
 	}
 
@@ -198,6 +216,7 @@ func GetDashboardCache(db *sql.DB) (*types.CacheData, error) {
 func SaveConfig(db *sql.DB, config types.CacheData) error {
 	configJSON, err := json.Marshal(config)
 	if err != nil {
+		log.Printf("error: failed to marshal config data: %v", err)
 		return err
 	}
 
@@ -206,6 +225,9 @@ func SaveConfig(db *sql.DB, config types.CacheData) error {
 	VALUES (1, ?, CURRENT_TIMESTAMP);`
 
 	_, err = db.Exec(query, string(configJSON))
+	if err != nil {
+		log.Printf("error: failed to save config: %v", err)
+	}
 	return err
 }
 
@@ -217,6 +239,7 @@ func LoadConfig(db *sql.DB) (types.CacheData, error) {
 	// Grab row ID 1
 	err := db.QueryRow(`SELECT config FROM config WHERE id = 1`).Scan(&configStr)
 	if err != nil {
+		log.Printf("error: failed to load config: %v", err)
 		if err == sql.ErrNoRows {
 			// If no config exists yet, return a default!
 			return types.CacheData{Theme: "sunset"}, nil
@@ -226,5 +249,9 @@ func LoadConfig(db *sql.DB) (types.CacheData, error) {
 
 	// Unmarshal the JSON string back into our struct
 	err = json.Unmarshal([]byte(configStr), &conf)
+	if err != nil {
+		log.Printf("error: failed to unmarshal config data: %v", err)
+		return conf, err
+	}
 	return conf, err
 }

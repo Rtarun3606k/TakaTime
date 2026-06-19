@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
+	"log"
 )
 
 type dataLoadedMsg struct {
@@ -24,6 +25,7 @@ func fetchData(uri string, fallbackTheme types.ThemeConfig) tea.Cmd {
 		sqliteDB, err := db.InitSQLite()
 		if err != nil {
 			// Fallback if DB fails to open
+			log.Println("sqlite DB connection initialization failed, falling back: ", err)
 			return dataLoadedMsg{updatedModel: Model{}, err: err}
 		}
 		defer sqliteDB.Close()
@@ -55,8 +57,12 @@ func fetchData(uri string, fallbackTheme types.ThemeConfig) tea.Cmd {
 				TodayHours:        cachedData.TodayHours,
 				AverageHours:      cachedData.AverageHours,
 				DailyHistory:      cachedData.DailyHistory,
-			}
+			} 
+			
+			
 			return dataLoadedMsg{updatedModel: tempModel, err: nil, FromCache: true}
+		} else {
+			log.Println("Failed to get dashboard Cache: ", err)
 		}
 
 		// Cache MISS! Fetch fresh from MongoDB
@@ -67,6 +73,7 @@ func fetchData(uri string, fallbackTheme types.ThemeConfig) tea.Cmd {
 		filledModel.AppStyles = loadedStyles
 
 		if err != nil {
+			log.Println("Failed to fetch data from MongoDB:", err)
 			return dataLoadedMsg{updatedModel: filledModel, err: err}
 		}
 

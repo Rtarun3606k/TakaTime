@@ -12,6 +12,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"log"
 )
 
 func initModel(mongoURI string, theme types.ThemeConfig) Model {
@@ -46,7 +47,7 @@ func main() {
 	//logging setup
 	f, err := debugger.SetupDashboardLog()
 	if err != nil {
-		fmt.Printf("fatal: %v\n", err)
+		fmt.Printf("fatal error setting up the debugger: %v\n", err)
 		os.Exit(1)
 	}
 	defer f.Close()
@@ -71,11 +72,12 @@ func main() {
 
 	// Initialize the model with the URI. It will start with Loading: true
 	appModel := initModel(mongoDBString, theme)
+	log.Println("appModel initialized")
 
 	// Start the program instantly. The Init() function handles the async loading.
 	p := tea.NewProgram(appModel, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
-		fmt.Printf("Alas, there's been an error: %v", err)
+		fmt.Printf("An error has occured while running the dashboard: %v", err)
 		os.Exit(1)
 	}
 }

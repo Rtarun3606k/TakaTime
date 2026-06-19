@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/Rtarun3606k/TakaTime/internal/types"
@@ -10,14 +11,14 @@ import (
 )
 
 func AddEntryToMongo(logs []types.LogEntry, mongoURI string) error {
-	ctx, cancle := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancle()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	clientOption := options.Client().ApplyURI(mongoURI)
 	client, err := mongo.Connect(clientOption)
 
 	if err != nil {
-		// log.Printf("Cannot connect to mongodb %s", err)
+		log.Printf("Cannot connect to mongodb %s", err)
 		return err
 	}
 
@@ -32,6 +33,7 @@ func AddEntryToMongo(logs []types.LogEntry, mongoURI string) error {
 
 	_, err = collection.InsertMany(ctx, documents)
 	if err != nil {
+		log.Printf("error: failed to insert logs into mongodb: %v", err)
 		return err
 	}
 

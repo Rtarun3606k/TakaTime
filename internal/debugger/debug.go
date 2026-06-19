@@ -10,6 +10,7 @@ func SetupLog() error {
 	// 1. Get Home Dir
 	homeDirLocation, err := os.UserHomeDir()
 	if err != nil {
+		log.Printf("Error getting user home directory: %v", err)
 		return err
 	}
 
@@ -19,6 +20,7 @@ func SetupLog() error {
 
 	// 3. Ensure Directory Exists
 	if err := os.MkdirAll(logDir, 0755); err != nil {
+		log.Printf("Error creating log directory: %v", err)
 		return err
 	}
 
@@ -27,6 +29,7 @@ func SetupLog() error {
 	// O_APPEND = Add to bottom if exists
 	file, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
+		log.Printf("Error opening log file: %v", err)
 		return err
 	}
 
@@ -42,6 +45,7 @@ func SetupDashboardLog() (*os.File, error) {
 	// 1. Get Home Dir
 	homeDirLocation, err := os.UserHomeDir()
 	if err != nil {
+		log.Printf("Error getting user home directory: %v", err)
 		return nil, err
 	}
 
@@ -51,6 +55,7 @@ func SetupDashboardLog() (*os.File, error) {
 
 	// 3. Ensure Directory Exists
 	if err := os.MkdirAll(logDir, 0755); err != nil {
+		log.Printf("Error creating log directory: %v", err)
 		return nil, err
 	}
 
@@ -59,6 +64,7 @@ func SetupDashboardLog() (*os.File, error) {
 	// O_APPEND = Add to bottom if exists
 	file, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
+		log.Printf("Error opening log file: %v", err)
 		return nil, err
 	}
 

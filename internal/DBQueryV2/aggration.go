@@ -3,6 +3,7 @@ package dbqueryv2
 import (
 	"context"
 	"fmt"
+	"log"
 	"sort"
 	"time"
 
@@ -42,15 +43,16 @@ func GetListStats(client *mongo.Client, fieldName string, limit int, theme types
 	// filter := bson.D{{Key: fieldName, Value: bson.D{{Key: "$ne", Value: ""}}}}
 	filter := bson.D{{Key: fieldName, Value: bson.D{{Key: "$ne", Value: ""}}}}
 
-if days > 0 {
-	start := time.Now().AddDate(0, 0, -days)
-	filter = append(filter, bson.E{
-		Key: "timestamp",
-		Value: bson.D{{Key: "$gte", Value: start}},
-	})
-}
+	if days > 0 {
+		start := time.Now().AddDate(0, 0, -days)
+		filter = append(filter, bson.E{
+			Key:   "timestamp",
+			Value: bson.D{{Key: "$gte", Value: start}},
+		})
+	}
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
+		log.Default().Printf("Error fetching logs for %s: %v", fieldName, err)
 		return nil, err
 	}
 
@@ -68,6 +70,7 @@ if days > 0 {
 
 	var rawLogs []RawLog
 	if err = cursor.All(ctx, &rawLogs); err != nil {
+		log.Printf("Error decoding logs for %s: %v", fieldName, err)
 		return nil, err
 	}
 
@@ -160,11 +163,13 @@ func GetTimeStats(client *mongo.Client) (types.TimeGridStruct, error) {
 	//already thought this through so no worries man its you from past ..
 	cursor, err := collection.Find(ctx, bson.D{})
 	if err != nil {
+		log.Printf("Error fetching logs for time stats: %v", err)
 		return types.TimeGridStruct{}, err
 	}
 
 	var allLogs []LogTime
 	if err = cursor.All(ctx, &allLogs); err != nil {
+		log.Printf("Error decoding logs for time stats: %v", err)
 		return types.TimeGridStruct{}, err
 	}
 

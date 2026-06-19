@@ -23,6 +23,7 @@ func SetupContext(w, h int, theme types.ThemeConfig) *gg.Context {
 func LoadFontFace(fontBytes []byte, points float64) (font.Face, error) {
 	f, err := truetype.Parse(fontBytes)
 	if err != nil {
+
 		return nil, err
 	}
 	face := truetype.NewFace(f, &truetype.Options{

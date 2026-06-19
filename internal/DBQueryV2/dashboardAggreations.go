@@ -58,12 +58,14 @@ func FetchActivityDistribution(ctx context.Context, collection *mongo.Collection
 	}
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
+		log.Printf("Error running aggregation for time stats: %v", err)
 		return dist, err
 	}
 	defer cursor.Close(ctx)
 
 	var hourStats []HourStat
 	if err = cursor.All(ctx, &hourStats); err != nil {
+		log.Printf("Error decoding aggregation results for time stats: %v", err)
 		return dist, err
 	}
 
@@ -124,12 +126,14 @@ func FetchStreakAndToday(ctx context.Context, collection *mongo.Collection) (int
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	dailyMap := make(map[string]float64)
 	if err != nil {
+		log.Printf("Error running aggregation for daily stats: %v", err)
 		return 0, 0, 0, dailyMap, err
 	}
 	defer cursor.Close(ctx)
 
 	var dailyStats []DailyStat
 	if err = cursor.All(ctx, &dailyStats); err != nil {
+		log.Printf("Error decoding aggregation results for daily stats: %v", err)
 		return 0, 0, 0, dailyMap, err
 	}
 

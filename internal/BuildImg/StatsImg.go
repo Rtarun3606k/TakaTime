@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"image"
+	"log"
 	"time"
 
 	"github.com/Rtarun3606k/TakaTime/internal/types"
@@ -22,12 +23,14 @@ func LanguageStatsImg(stats []types.LanguageStat, fontData []byte, theme types.T
 	// 2. Draw Header
 	// FIXED: Now passing 'theme' and size '40.0'
 	if err := drawHeader(dc, "TakaTime Language Stats", fontData, theme, 40.0); err != nil {
+		log.Printf("error: failed to draw header: %v", err)
 		return nil, err
 	}
 
 	// 3. Draw the List of Languages
 	// FIXED: Now passing 'theme'
 	if err := drawStatsList(dc, stats, fontData, theme); err != nil {
+		log.Printf("error: failed to draw stats list: %v", err)
 		return nil, err
 	}
 
@@ -35,6 +38,7 @@ func LanguageStatsImg(stats []types.LanguageStat, fontData []byte, theme types.T
 	footerText := fmt.Sprintf("Last Updated: %s", currettime.Format("2006-01-02 15:04:05"))
 	// FIXED: Now passing 'theme'
 	if err := drawFooter(dc, footerText, fontData, theme); err != nil {
+		log.Printf("error: failed to draw footer: %v", err)
 		return nil, err
 	}
 
@@ -54,6 +58,7 @@ func setupContext(w, h int, theme types.ThemeConfig) *gg.Context {
 func drawHeader(dc *gg.Context, text string, fontData []byte, theme types.ThemeConfig, size float64) error {
 	headerFace, err := loadFontFace(fontData, size)
 	if err != nil {
+		log.Printf("error: failed to load header font: %v", err)
 		return err
 	}
 	dc.SetFontFace(headerFace)
@@ -68,6 +73,7 @@ func drawHeader(dc *gg.Context, text string, fontData []byte, theme types.ThemeC
 func drawStatsList(dc *gg.Context, stats []types.LanguageStat, fontData []byte, theme types.ThemeConfig) error {
 	listFace, err := loadFontFace(fontData, 20)
 	if err != nil {
+		log.Printf("error: failed to load list font: %v", err)
 		return fmt.Errorf("failed to load list font: %w", err)
 	}
 	dc.SetFontFace(listFace)
@@ -118,6 +124,7 @@ func drawRow(dc *gg.Context, stat types.LanguageStat, y float64, theme types.The
 func loadFontFace(fontBytes []byte, points float64) (font.Face, error) {
 	f, err := truetype.Parse(fontBytes)
 	if err != nil {
+		log.Printf("error: failed to parse font: %v", err)
 		return nil, err
 	}
 	face := truetype.NewFace(f, &truetype.Options{
@@ -131,6 +138,7 @@ func loadFontFace(fontBytes []byte, points float64) (font.Face, error) {
 func drawFooter(dc *gg.Context, text string, fontData []byte, theme types.ThemeConfig) error {
 	footerFace, err := loadFontFace(fontData, 12)
 	if err != nil {
+		log.Printf("error: failed to load footer font: %v", err)
 		return err
 	}
 	dc.SetFontFace(footerFace)
