@@ -45,6 +45,11 @@ func fetchData(uri string, fallbackTheme types.ThemeConfig) tea.Cmd {
 		cachedData, err := db.GetDashboardCache(sqliteDB)
 		if err == nil && cachedData != nil {
 			// Cache HIT
+			recolorList(cachedData.Languages, activeTheme)
+			recolorList(cachedData.Projects, activeTheme)
+			recolorList(cachedData.OS, activeTheme)
+			recolorList(cachedData.Editors, activeTheme)
+
 			tempModel := Model{
 				AppStyles:         loadedStyles, // 👉 NEW 2: Attach styles to the Cache HIT model
 				LanguageListStats: cachedData.Languages,
@@ -191,24 +196,29 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			switch msg.String() {
 			case "esc", "q", "s", "S":
 				m.ShowSettings = false // Close modal without saving
+				return m, nil
 
 			// Navigation (Supports wrapping around columns!)
 			case "up", "k":
 				if m.SettingsCursor > 1 {
 					m.SettingsCursor -= 2
 				} // Jump up a row
+				return m, nil
 			case "down", "j":
 				if m.SettingsCursor < len(types.AvailableThemes)-2 {
 					m.SettingsCursor += 2
 				} // Jump down a row
+				return m, nil
 			case "left", "h":
 				if m.SettingsCursor > 0 {
 					m.SettingsCursor--
 				} // Move left
+				return m, nil
 			case "right", "l":
 				if m.SettingsCursor < len(types.AvailableThemes)-1 {
 					m.SettingsCursor++
 				} // Move right
+				return m, nil
 
 			case "enter":
 				// 1. Grab the name of the selected theme
@@ -218,37 +228,43 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				newThemeConfig := utils.ThemeSwitcher(selectedThemeName)
 
 				// 3. Rebuild the AppStyles using the new colors!
-				// (Replace `Styles.BuildStyles` with whatever function you use to initialize styles)
-				m.AppStyles = Styles.BuildStyles(newThemeConfig)
-
-				// 4. Close the modal to reveal the new theme!
-
-				sqliteDB, _ := db.InitSQLite()
-				if sqliteDB != nil {
-					// Assuming AppConfig is in your types package
-					db.SaveConfig(sqliteDB, types.CacheData{Theme: selectedThemeName})
-					sqliteDB.Close()
-				}
-
-				// 3. Rebuild the AppStyles locally using the new colors and persist the
-			// selected theme so GetData uses it for stat bar colors.
 				m.AppStyles = Styles.BuildStyles(newThemeConfig)
 				m.TUITheme = newThemeConfig
 				m.ShowSettings = false
 
-				// 4. Clear stale cache so the next fetch re-colors bars with the new theme.
-				if sqliteDB2, err2 := db.InitSQLite(); err2 == nil {
-					db.ClearDashboardCache(sqliteDB2)
-					sqliteDB2.Close()
+				// Recolor lists using the new theme colors
+				recolorList(m.LanguageListStats, newThemeConfig)
+				recolorList(m.ProjectListStats, newThemeConfig)
+				recolorList(m.OsListStats, newThemeConfig)
+				recolorList(m.editorListStats, newThemeConfig)
+
+				// Persist config and updated cache to SQLite
+				sqliteDB, _ := db.InitSQLite()
+				if sqliteDB != nil {
+					db.SaveConfig(sqliteDB, types.CacheData{Theme: selectedThemeName})
+					db.ClearDashboardCache(sqliteDB)
+					// db.SaveDashboardCache(sqliteDB, types.CacheData{
+					// 	Languages:    m.LanguageListStats,
+					// 	Projects:     m.ProjectListStats,
+					// 	OS:           m.OsListStats,
+					// 	Editors:      m.editorListStats,
+					// 	TimeStats:    m.TimeStats,
+					// 	Activity:     m.ActivityData,
+					// 	Streak:       m.Streak,
+					// 	TodayHours:   m.TodayHours,
+					// 	AverageHours: m.AverageHours,
+					// 	DailyHistory: m.DailyHistory,
+					// })
+					sqliteDB.Close()
 				}
 
 				// 5. Force the viewport to redraw with the new colors!
 				if m.Ready {
 					m.updateViewport()
 				}
+				return m, nil
+				return m, nil
 			}
-			m.Loading = true
-			return m, fetchData(m.MongoURI, m.TUITheme)
 		}
 
 		switch msg.String() {
@@ -300,4 +316,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, tea.Batch(cmds...)
+}
+
+func recolorList(stats []types.ListStats, theme types.ThemeConfig) {
+	colors := []string{theme.Color1, theme.Color2, theme.Color3, theme.Color4, theme.TextColor}
+	for i := range stats {
+		stats[i].Color = colors[i%len(colors)]
+	}
 }
