@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -11,16 +12,16 @@ import (
 	"github.com/Rtarun3606k/TakaTime/internal/db"
 	"github.com/Rtarun3606k/TakaTime/internal/debugger"
 	"github.com/Rtarun3606k/TakaTime/internal/types"
+	"github.com/go-enry/go-enry/v2"
 )
 
 // pes2ug23cs645
 func main() {
-
 	uri := flag.String("uri", "", "MongoDB Atlas Connection URI")
 	project := flag.String("project", "unknown", "Project Name")
 	file := flag.String("file", "", "File Name")
 	duration := flag.Float64("duration", 0, "Duration in seconds")
-	language := flag.String("language", "unknown", "Lnaguage")
+	language := flag.String("language", "unknown", "Language (Deprecated)")
 	editor := flag.String("editor", "unknown", "Editor Name NeoVim/VsCode")
 	versionFlag := flag.Bool("version", false, "show Version")
 
@@ -36,12 +37,24 @@ func main() {
 		return
 	}
 
-	//setup debugger logs
+	// setup debugger logs
 	err := debugger.SetupLog()
-
 	if err != nil {
 		log.Panic("Failed to initialize logger: ", err)
 	}
+
+	if *language != "unknown" {
+		log.Println("The flag language is deprecated. The lang now is detected from the file. Lang provided:", *language)
+	}
+
+	fileContent, _ := os.ReadFile(*file)
+	*language = enry.GetLanguage(*file, fileContent)
+
+	// Fallback
+	if *language == "" {
+		*language = "text"
+	}
+	log.Println("Detected language:", *language, "from file:", *file)
 
 	var errr error
 	types.DB, errr = db.InitSQLite()
