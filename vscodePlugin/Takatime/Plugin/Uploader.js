@@ -34,7 +34,6 @@ function getCleanEditorName() {
  */
 function getGoArgs(document, mongoUri) {
   const filePath = document.fileName;
-  const language = document.languageId || "unknown"; // VS Code knows the language!
 
   // Detect Project Name
   let projectName = "Unknown";
@@ -49,8 +48,6 @@ function getGoArgs(document, mongoUri) {
     filePath,
     "-project",
     projectName,
-    "-language",
-    language,
     "-uri",
     mongoUri, // Passing URI as flag (required by your binary)
     "-duration",
