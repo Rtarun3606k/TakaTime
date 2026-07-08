@@ -1,12 +1,14 @@
 local M = {}
 local config = require("taka-time.config")
 local utils = require("taka-time.utils")
+local uv = vim.uv or vim.loop
 
 -- STATE
 local state = {
 	last_event_time = os.time(), -- When was the last keystroke?
 	pending_duration = 0, -- Accumulated seconds to send
 	job_id = 0,
+	timer = nil, -- Background sync timer handle
 }
 
 -- TIMEOUT: If no activity for 2 mins, don't count that time gap.
@@ -71,7 +73,17 @@ local function attempt_upload()
 			end
 		end,
 	})
+
+	-- jobstart returns 0 or -1 on failure; on_exit won't fire in that case
+	if state.job_id <= 0 then
+		state.job_id = 0
+		state.pending_duration = state.pending_duration + time_to_send
+		if config.options.debug then
+			print("[Taka] Failed to start upload process.")
+		end
+	end
 end
+
 
 -----------------------------------------------------------------------------------
 --  THE FIX: Only add time if activity happened recently
@@ -106,11 +118,28 @@ function M.setup_listeners()
 			attempt_upload()
 		end,
 	})
+
+	-- On Exit, flush any remaining data
+	vim.api.nvim_create_autocmd("VimLeavePre", {
+		group = group,
+		callback = M.on_exit,
+	})
 end
 
 -------------------------------------------------------------------------------------
+function M.clear_timer()
+	if state.timer then
+		state.timer:stop()
+		state.timer:close()
+		state.timer = nil
+	end
+end
+
 -- Public: Called on Exit
 function M.on_exit()
+	-- Stop the background sync timer
+	M.clear_timer()
+
 	-- 1. Snapshot the time immediately
 	local time_to_send = state.pending_duration
 
@@ -150,8 +179,11 @@ function M.on_exit()
 end
 
 function M.start_timer()
-	local timer = vim.loop.new_timer()
-	timer:start(
+	-- Stop any previously running timer to prevent duplicates on re-setup
+	M.clear_timer()
+
+	state.timer = uv.new_timer()
+	state.timer:start(
 		1000, -- Wait 1s
 		60000, -- Repeat every 60s
 		vim.schedule_wrap(function()

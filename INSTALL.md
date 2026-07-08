@@ -81,12 +81,9 @@ Add the plugin to your Lazy.nvim configuration:
 return {
   "Rtarun3606k/TakaTime",
   lazy = false,
-  config = function()
-    -- Optional: enable debug mode if needed
-    require("taka-time").setup({
-      debug = false
-    })
-  end,
+  opts = {
+    -- debug = false,  -- set to true for verbose logging
+  },
 }
 ```
 

@@ -161,15 +161,6 @@ function M.setup(opts)
 
   -- Start the background sync timer
   core.start_timer()
-
-  -- 6. Exit Handler
-  -- We still handle Exit explicitly here or inside core.
-  -- Since core.on_exit is public, this is fine, OR core.setup_listeners can handle it.
-  -- But usually VimLeavePre is safer in init.lua for plugin lifecycle.
-  vim.api.nvim_create_autocmd("VimLeavePre", {
-    group = vim.api.nvim_create_augroup("TakaTimeExit", { clear = true }),
-    callback = core.on_exit,
-  })
 end
 
 return M
