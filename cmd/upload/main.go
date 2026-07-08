@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 	"path/filepath"
 	"time"
 
@@ -12,7 +11,6 @@ import (
 	"github.com/Rtarun3606k/TakaTime/internal/db"
 	"github.com/Rtarun3606k/TakaTime/internal/debugger"
 	"github.com/Rtarun3606k/TakaTime/internal/types"
-	"github.com/go-enry/go-enry/v2"
 )
 
 // pes2ug23cs645
@@ -47,8 +45,7 @@ func main() {
 		log.Println("The flag language is deprecated. The lang now is detected from the file. Lang provided:", *language)
 	}
 
-	fileContent, _ := os.ReadFile(*file)
-	*language = enry.GetLanguage(*file, fileContent)
+	*language = utils.DetectLanguage(*file)
 
 	// Fallback
 	if *language == "" {
@@ -92,6 +89,7 @@ func main() {
 		GitBranch: gitBranch,
 		Editor:    *editor,
 	}
+	log.Printf("file: %s , project : %s , duration : %f , Language : %s , Gitbrach : %s , editor : %s ", *file, *project, duration, *language, gitBranch, *editor)
 
 	// _, err = collection.InsertOne(ctx, entry)
 
@@ -109,9 +107,4 @@ func main() {
 		db.SyncQueue(*uri, types.DB)
 	}
 
-	// if err != nil {
-	// 	log.Fatal("Insert Failed:", err)
-	// }
-	//
-	// log.Println("Log processed sucessfullty")
 }

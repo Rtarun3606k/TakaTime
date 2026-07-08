@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/Rtarun3606k/TakaTime/internal/Styles"
 	utils "github.com/Rtarun3606k/TakaTime/internal/Utils"
 	"github.com/Rtarun3606k/TakaTime/internal/db"
@@ -8,7 +10,6 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"log"
 )
 
 type dataLoadedMsg struct {
@@ -51,7 +52,7 @@ func fetchData(uri string, fallbackTheme types.ThemeConfig) tea.Cmd {
 			recolorList(cachedData.Editors, activeTheme)
 
 			tempModel := Model{
-				AppStyles:         loadedStyles, // 👉 NEW 2: Attach styles to the Cache HIT model
+				AppStyles:         loadedStyles, //  NEW 2: Attach styles to the Cache HIT model
 				LanguageListStats: cachedData.Languages,
 				ProjectListStats:  cachedData.Projects,
 				OsListStats:       cachedData.OS,
@@ -62,9 +63,8 @@ func fetchData(uri string, fallbackTheme types.ThemeConfig) tea.Cmd {
 				TodayHours:        cachedData.TodayHours,
 				AverageHours:      cachedData.AverageHours,
 				DailyHistory:      cachedData.DailyHistory,
-			} 
-			
-			
+			}
+
 			return dataLoadedMsg{updatedModel: tempModel, err: nil, FromCache: true}
 		} else {
 			log.Println("Failed to get dashboard Cache: ", err)
