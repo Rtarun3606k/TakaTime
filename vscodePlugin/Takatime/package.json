@@ -2,7 +2,7 @@
   "name": "takatime",
   "displayName": "TakaTime - Privacy First Time Tracker",
   "description": "A privacy-first, serverless time tracker. Track coding metrics, visualize productivity, and maintain full data ownership.",
-  "version": "0.1.6",
+  "version": "1.1.1",
   "license": "MIT",
   "publisher": "Rtarun3606k",
   "icon": "public/TakatimeLogo.png",
@@ -52,5 +52,9 @@
     "eslint": "^9.39.1",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Rtarun3606k/TakaTime.git"
   }
 }

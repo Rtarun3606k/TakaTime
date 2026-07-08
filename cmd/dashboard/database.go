@@ -54,6 +54,7 @@ func (m Model) GetData(URI string) (Model, *mongo.Client, error) {
 		m.TodayHours = todayHours
 		m.AverageHours = avgHours
 		m.DailyHistory = dailyHistory
+        log.Println("Streak fetched!")
 	}
 
 	// 2. Fetch Activity Distribution (Coder Persona)
@@ -62,6 +63,7 @@ func (m Model) GetData(URI string) (Model, *mongo.Client, error) {
 		log.Printf("Error fetching activity: %v", err)
 	} else {
 		m.ActivityData = activityDist
+		log.Println("Activity Distribution fetched!")
 	}
 
 	//get time grid stats today yestarday all that
@@ -69,7 +71,10 @@ func (m Model) GetData(URI string) (Model, *mongo.Client, error) {
 	timeStats, err := dbqueryv2.GetTimeStats(Client)
 	if err != nil {
 		log.Println("could not fetch timestats ", err)
+	} else {
+		log.Println("Timestats fetched!")
 	}
+	
 
 	m.DataFetchedTime = time.Now().Add(-3 * time.Minute)
 	m.TimeStats = timeStats

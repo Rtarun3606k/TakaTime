@@ -3,6 +3,7 @@ package dbqueryv2
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -42,6 +43,7 @@ func RunMigrations(client *mongo.Client) error {
 
 	res, err := logs.DeleteMany(ctx, deleteFilter)
 	if err != nil {
+		log.Printf("Error deleting buggy logs: %v", err)
 		return fmt.Errorf("failed to delete bad logs: %v", err)
 	}
 
@@ -52,7 +54,7 @@ func RunMigrations(client *mongo.Client) error {
 	_, err = migrations.UpdateOne(
 		ctx,
 		bson.D{{Key: "_id", Value: "v2_1_cleanup"}}, // Query
-		bson.D{{Key: "$set", Value: bson.D{          // Update
+		bson.D{{Key: "$set", Value: bson.D{ // Update
 			{Key: "ran_at", Value: time.Now()},
 			{Key: "deleted_count", Value: res.DeletedCount},
 		}}},

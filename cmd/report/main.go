@@ -200,7 +200,7 @@ func main() {
 
 		errr := gogist.UpdateReadMe(gistToken, targetRepo, content)
 		if errr != nil {
-			fmt.Println("Some error occured while updating readme ", err)
+			fmt.Println("Some error occured while updating readme ", errr)
 		}
 		fmt.Println("README Updated Successfully!")
 	} else {

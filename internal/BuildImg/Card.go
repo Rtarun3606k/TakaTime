@@ -3,6 +3,7 @@ package buildimg
 import (
 	"fmt"
 	"image"
+	"log"
 	"strings"
 	"time"
 
@@ -15,6 +16,7 @@ func DrawHeader(dc *gg.Context, text string, fontData []byte, theme types.ThemeC
 	// Load font with the specific size requested (e.g., 65.0 or 30.0)
 	headerFace, err := loadFontFace(fontData, size)
 	if err != nil {
+		log.Printf("error: failed to load header font: %v", err)
 		return err
 	}
 	dc.SetFontFace(headerFace)
@@ -36,6 +38,7 @@ func DrawListCard(title string, stats []types.ListStats, fontData []byte, update
 
 	// Header
 	if err := DrawHeader(dc, title, fontData, theme, 60); err != nil {
+		log.Printf("error: failed to draw header: %v", err)
 		return nil, err
 	}
 
@@ -159,6 +162,7 @@ func DrawTechCard(editors []types.ListStats, osSystems []types.ListStats, fontDa
 	dc := gogist.SetupContext(W, H, theme)
 
 	if err := DrawHeader(dc, "Environment Stats", fontData, theme, 42); err != nil {
+		log.Printf("error: failed to draw header: %v", err)
 		return nil, err
 	}
 

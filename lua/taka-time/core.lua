@@ -38,19 +38,12 @@ local function attempt_upload()
 		return
 	end
 
-	local ext = vim.fn.fnamemodify(file_path, ":e")
-	if ext == "" then
-		ext = "text"
-	end
-
 	local cmd = {
 		utils.get_binary_path(utils.BinaryEnum.UPLOAD),
 		"-uri",
 		config.options.mongo_uri,
 		"-project",
 		project,
-		"-language",
-		ext,
 		"-file",
 		file_path,
 		"-duration",
@@ -139,11 +132,6 @@ function M.on_exit()
 		return
 	end
 
-	local ext = vim.fn.fnamemodify(file_path, ":e")
-	if ext == "" then
-		ext = "text"
-	end
-
 	-- 3. Flush (Synchronous System Call)
 	-- We use the LOCAL 'time_to_send' variable here
 	vim.fn.system({
@@ -152,8 +140,6 @@ function M.on_exit()
 		config.options.mongo_uri,
 		"-project",
 		project,
-		"-language",
-		ext,
 		"-file",
 		file_path,
 		"-duration",

@@ -9,7 +9,7 @@ import com.intellij.openapi.application.ApplicationInfo
 
 object TakaTimeUploader {
 
-    fun spawnProcess(document: Document,duration: String): Boolean {
+    fun spawnProcess(document: Document, duration: String): Boolean {
         // 1. Check Config
         val mongoUri = TakaTimeConfig.getMongoUri()
         if (mongoUri.isNullOrBlank()) return false
@@ -21,7 +21,6 @@ object TakaTimeUploader {
 
         // 3. Extract the Telemetry Data
         val filePath = file.path
-        val language = file.fileType.name
 
         val project = ProjectLocator.getInstance().guessProjectForFile(file)
         val projectName = project?.basePath?.let { java.io.File(it).name }
@@ -38,20 +37,19 @@ object TakaTimeUploader {
             "bin",
             "taka-upload-$TAKATIME_VERSION$ext"
         ).toString()
-val applicationName = ApplicationInfo.getInstance().versionName ?: "JetBrains"
+        val applicationName = ApplicationInfo.getInstance().versionName ?: "JetBrains"
         // 5. Fire the Go CLI!
         return try {
             ProcessBuilder(
                 takaUploadPath,
                 "-file", filePath,
                 "-project", projectName,
-                "-language", language,
                 "-uri", mongoUri,
                 "-duration", duration,
                 "-editor", applicationName,
             ).start()
 
-            println("TakaTime: Heartbeat Sent -> Project: $projectName | File: $filePath | language: $language | uri: $takaUploadPath | duration: $duration | application: $applicationName" )
+            println("TakaTime: Heartbeat Sent -> Project: $projectName | File: $filePath | uri: $takaUploadPath | duration: $duration | application: $applicationName")
             true // Success! Timer will reset.
         } catch (e: Exception) {
             println("TakaTime: Failed to execute CLI - ${e.message}")

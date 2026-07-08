@@ -5,6 +5,28 @@ const fs = require("fs");
 const { spawn } = require("child_process");
 const env = require("./Config");
 
+function getCleanEditorName() {
+  const rawName = vscode.env.appName;
+
+  // Group all the standard Microsoft/OSS builds under one clean name
+  if (
+    rawName === "Visual Studio Code" ||
+    rawName === "Visual Studio Code - Insiders" ||
+    rawName === "Code - OSS" ||
+    rawName === "VSCodium"
+  ) {
+    return "VS Code";
+  }
+
+  // If you want to track Cursor or Windsurf specifically, let them pass through
+  if (rawName === "Cursor" || rawName === "Windsurf") {
+    return rawName;
+  }
+
+  // The Fallback: If it is some random fork we don't know about, return Antigravity
+  return "Antigravity";
+}
+
 /**
  * Prepares the arguments for the Go binary
  * @param {vscode.TextDocument} document
@@ -12,7 +34,6 @@ const env = require("./Config");
  */
 function getGoArgs(document, mongoUri) {
   const filePath = document.fileName;
-  const language = document.languageId || "unknown"; // VS Code knows the language!
 
   // Detect Project Name
   let projectName = "Unknown";
@@ -27,15 +48,13 @@ function getGoArgs(document, mongoUri) {
     filePath,
     "-project",
     projectName,
-    "-language",
-    language,
     "-uri",
     mongoUri, // Passing URI as flag (required by your binary)
     "-duration",
     "120", // Sending a default heartbeat duration (optional, fixes "less than 0" error)
     "-editor",
     // "VsCode",
-    "Antigravity",
+    getCleanEditorName(),
   ];
 }
 

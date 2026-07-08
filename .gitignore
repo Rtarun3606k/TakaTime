@@ -19,3 +19,8 @@ nvim_logs.txt
 internal.txt
 .version
 taka-das*
+coverage.out
+*.coverprofile
+bin/
+april.json
+taka-export

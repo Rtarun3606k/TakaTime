@@ -15,12 +15,11 @@ import (
 
 // pes2ug23cs645
 func main() {
-
 	uri := flag.String("uri", "", "MongoDB Atlas Connection URI")
 	project := flag.String("project", "unknown", "Project Name")
 	file := flag.String("file", "", "File Name")
 	duration := flag.Float64("duration", 0, "Duration in seconds")
-	language := flag.String("language", "unknown", "Lnaguage")
+	language := flag.String("language", "unknown", "Language (Deprecated)")
 	editor := flag.String("editor", "unknown", "Editor Name NeoVim/VsCode")
 	versionFlag := flag.Bool("version", false, "show Version")
 
@@ -36,12 +35,23 @@ func main() {
 		return
 	}
 
-	//setup debugger logs
+	// setup debugger logs
 	err := debugger.SetupLog()
-
 	if err != nil {
 		log.Panic("Failed to initialize logger: ", err)
 	}
+
+	if *language != "unknown" {
+		log.Println("The flag language is deprecated. The lang now is detected from the file. Lang provided:", *language)
+	}
+
+	*language = utils.DetectLanguage(*file)
+
+	// Fallback
+	if *language == "" {
+		*language = "text"
+	}
+	log.Println("Detected language:", *language, "from file:", *file)
 
 	var errr error
 	types.DB, errr = db.InitSQLite()
@@ -79,6 +89,7 @@ func main() {
 		GitBranch: gitBranch,
 		Editor:    *editor,
 	}
+	log.Printf("file: %s , project : %s , duration : %f , Language : %s , Gitbrach : %s , editor : %s ", *file, *project, duration, *language, gitBranch, *editor)
 
 	// _, err = collection.InsertOne(ctx, entry)
 
@@ -96,9 +107,4 @@ func main() {
 		db.SyncQueue(*uri, types.DB)
 	}
 
-	// if err != nil {
-	// 	log.Fatal("Insert Failed:", err)
-	// }
-	//
-	// log.Println("Log processed sucessfullty")
 }

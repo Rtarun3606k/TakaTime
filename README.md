@@ -11,46 +11,70 @@
   <br>
   <i>"Time is what we want most, but what we use worst."</i>
 
-  <br><br>
+  <br>
 
-  <a href="https://github.com/Rtarun3606k/TakaTime/stargazers">
-    <img src="https://img.shields.io/github/stars/Rtarun3606k/TakaTime?style=for-the-badge&logo=star&color=ffea00" alt="GitHub Stars">
-  </a>
+<a href="https://github.com/Rtarun3606k/TakaTime/stargazers">
+  <img src="https://img.shields.io/github/stars/Rtarun3606k/TakaTime?style=for-the-badge&logo=star&color=ffea00" alt="GitHub Stars">
+</a>
+
 <a href="https://github.com/Rtarun3606k/TakaTime">
   <img src="https://komarev.com/ghpvc/?username=rtarun3606k&repo=TakaTime&label=Total+Visits&style=for-the-badge" alt="Total Visits"/>
 </a>
-  <a href="https://github.com/Rtarun3606k/TakaTime/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/Rtarun3606k/TakaTime?style=for-the-badge&color=blue" alt="License">
-  </a>
+
+<a href="https://github.com/Rtarun3606k/TakaTime/blob/main/LICENSE">
+  <img src="https://img.shields.io/github/license/Rtarun3606k/TakaTime?style=for-the-badge&color=blue" alt="License">
+</a>
+
 <a href="https://github.com/rtarun3606k/Takatime/releases">
-  <img src="https://img.shields.io/github/downloads/rtarun3606k/Takatime/total?style=for-the-badge&color=blue&logo=github" alt="total downloads">
+  <img src="https://img.shields.io/github/downloads/rtarun3606k/Takatime/total?style=for-the-badge&color=blue&logo=github" alt="Total Downloads">
 </a>
 
-  <br>
+<br>
 
-  <a href="https://github.com/Rtarun3606k/TakaTime">
-    <img src="https://img.shields.io/badge/NeoVim-%2357A143.svg?&style=for-the-badge&logo=neovim&logoColor=white" alt="Neovim">
-  </a>
-  <a href="https://marketplace.visualstudio.com/items?itemName=Rtarun3606k.takatime">
-    <img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code">
-  </a>
-  <a href="https://plugins.jetbrains.com/plugin/31861-takatime">
-  <img src="https://img.shields.io/badge/JetBrains-Plugin-000000?style=for-the-badge&logo=jetbrains&logoColor=white" alt="JetBrains Plugin">
+<h3>Works With</h3>
+
+<a href="https://github.com/Rtarun3606k/TakaTime">
+  <img src="https://img.shields.io/badge/Neovim-57A143?style=for-the-badge&logo=neovim&logoColor=white" alt="Neovim">
 </a>
-  <a href="https://github.com/Rtarun3606k/TakaTime">
-    <img src="https://img.shields.io/badge/Antigravity-111111?style=for-the-badge&logo=rocket&logoColor=00E5FF">
-  </a>
 
-  <br>
+<a href="https://marketplace.visualstudio.com/items?itemName=Rtarun3606k.takatime">
+  <img src="https://img.shields.io/badge/VS_Code-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code">
+</a>
 
-  ![Go](https://img.shields.io/badge/Go-65.8%25-00ADD8?style=flat-square&logo=go&logoColor=white)
-  ![JavaScript](https://img.shields.io/badge/JavaScript-22.3%25-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-  ![Lua](https://img.shields.io/badge/Lua-11.9%25-000080?style=flat-square&logo=lua&logoColor=white)
+<a href="https://plugins.jetbrains.com/plugin/31861-takatime">
+  <img src="https://img.shields.io/badge/JetBrains_IDEs-000000?style=for-the-badge&logo=jetbrains&logoColor=white" alt="JetBrains">
+</a>
 
+<a href="https://github.com/Rtarun3606k/TakaTime">
+  <img src="https://img.shields.io/badge/Antigravity-111111?style=for-the-badge&logo=rocket&logoColor=00E5FF" alt="Antigravity">
+</a>
 
-  <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
-<!-- <iframe width="245px" height="48px" src="https://plugins.jetbrains.com/embeddable/install/31861"></iframe> -->
+<br>
+
+<h3>Available On</h3>
+
+<a href="https://marketplace.visualstudio.com/items?itemName=Rtarun3606k.takatime">
+  <img src="https://img.shields.io/badge/VS_Code_Marketplace-007ACC?style=for-the-badge&logo=visual-studio-code&logoColor=white" alt="VS Code Marketplace">
+</a>
+
+<a href="https://open-vsx.org/extension/Rtarun3606k/takatime">
+  <img src="https://img.shields.io/badge/Open_VSX-5C2D91?style=for-the-badge&logo=eclipseide&logoColor=white" alt="Open VSX">
+</a>
+
+<a href="https://plugins.jetbrains.com/plugin/31861-takatime">
+  <img src="https://img.shields.io/badge/JetBrains_Marketplace-000000?style=for-the-badge&logo=jetbrains&logoColor=white" alt="JetBrains Marketplace">
+</a>
+
+<br>
+
+![Go](https://img.shields.io/badge/Go-69.6%25-00ADD8?style=flat-square&logo=go&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-11.7%25-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![Kotlin](https://img.shields.io/badge/Kotlin-9.8%25-7F52FF?style=flat-square&logo=kotlin&logoColor=white)
+![Lua](https://img.shields.io/badge/Lua-8.9%25-000080?style=flat-square&logo=lua&logoColor=white)
+
+<img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB">
+<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker">
+
 </div>
 
 <br>
