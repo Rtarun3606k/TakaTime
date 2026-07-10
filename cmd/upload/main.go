@@ -46,12 +46,7 @@ func main() {
 	}
 
 	*language = utils.DetectLanguage(*file)
-
-	// Fallback
-	if *language == "" {
-		*language = "text"
-	}
-	log.Println("Detected language:", *language, "from file:", *file)
+	log.Printf("Detected language: %s. From file: %s", *language, *file)
 
 	var errr error
 	types.DB, errr = db.InitSQLite()
@@ -106,5 +101,4 @@ func main() {
 	if *uri != "" {
 		db.SyncQueue(*uri, types.DB)
 	}
-
 }
