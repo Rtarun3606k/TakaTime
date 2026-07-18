@@ -117,8 +117,6 @@ func main() {
 
 		}
 
-		log.Printf("mongo uri %s", mongoURI)
-
 		name := strings.Split(targetRepo, "/")
 
 		// 1. Fetch Real Data for all time all time days = 0 else the count
