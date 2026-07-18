@@ -112,6 +112,13 @@ func main() {
 			// Don't crash, just log it. The report can still run.
 		}
 
+		if err := dbqueryv2.RunLanguageMigration(client, "takatime", "logs"); err != nil {
+			log.Printf("Migration warning: %v", err)
+
+		}
+
+		log.Printf("mongo uri %s", mongoURI)
+
 		name := strings.Split(targetRepo, "/")
 
 		// 1. Fetch Real Data for all time all time days = 0 else the count

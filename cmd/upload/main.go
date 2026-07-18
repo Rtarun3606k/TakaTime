@@ -13,7 +13,6 @@ import (
 	"github.com/Rtarun3606k/TakaTime/internal/types"
 )
 
-// pes2ug23cs645
 func main() {
 	uri := flag.String("uri", "", "MongoDB Atlas Connection URI")
 	project := flag.String("project", "unknown", "Project Name")
@@ -55,16 +54,6 @@ func main() {
 	}
 	defer types.DB.Close()
 
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
-	//
-	// client, err := db.ConnectToDataBase(*uri)
-	// if err != nil {
-	// 	log.Fatalln("Counld not connect to mongo db", err)
-	// }
-	//
-	// collection := client.Database("takatime").Collection("logs")
-	//
 	fileDir := filepath.Dir(*file)
 
 	gitBranch, err := utils.GetGitBranch(fileDir)
@@ -84,11 +73,8 @@ func main() {
 		GitBranch: gitBranch,
 		Editor:    *editor,
 	}
-	log.Printf("file: %s , project : %s , duration : %f , Language : %s , Gitbrach : %s , editor : %s ", *file, *project, duration, *language, gitBranch, *editor)
 
-	// _, err = collection.InsertOne(ctx, entry)
-
-	// 6. STEP 1: Always Save to Local DB First (Safety Net)
+	//  Always Save to Local DB First (Safety Net)
 	if err := db.Enqueue(entry, types.DB); err != nil {
 		log.Printf("Failed to save offline: %v", err)
 		// If we can't save to disk, we probably shouldn't continue
@@ -96,7 +82,7 @@ func main() {
 	}
 	log.Printf("Saved log for '%s' to offline queue.", *file)
 
-	// 7. STEP 2: The Sync Loop (Drain the Queue)
+	// The Sync Loop (Drain the Queue)
 	// We assume *uri is valid here. If empty, we just skip syncing.
 	if *uri != "" {
 		db.SyncQueue(*uri, types.DB)
