@@ -306,7 +306,7 @@ copyBtn.addEventListener("click", () => {
   navigator.clipboard.writeText(output.value);
 
   const orig = copyBtnText.innerText;
-  copyBtnText.innerText = "Copied! ✨";
+  copyBtnText.textContent = "Copied! ✨";
   copyBtn.classList.remove("bg-[#238636]", "hover:bg-[#2ea043]");
   copyBtn.classList.add("bg-emerald-600", "hover:bg-emerald-500");
   setTimeout(() => {
