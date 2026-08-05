@@ -6,7 +6,7 @@ taka-cli
 *.exe
 *.dll
 *.dylib
-
+commands/
 # Ignore logs
 *.log
 #ignore csv

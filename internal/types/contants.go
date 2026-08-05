@@ -73,4 +73,7 @@ var ExtensionOverrides = map[string]string{
 	"plaintext":  "Plain Text",
 	"plain text": "Plain Text",
 	"":           "Plain Text",
+
+	//Markdown
+	"md": "Markdown",
 }

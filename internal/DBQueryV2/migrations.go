@@ -96,12 +96,13 @@ func RunLanguageMigration(mongoClient *mongo.Client, dbName, collectionName stri
 		return err
 	}
 	if alreadyRan {
+		fmt.Println("Skipping the language migration")
 		return nil // Skip silently
 	}
 
 	log.Println("TakaTime: Running one-time language normalization...")
 
-	// 1. Fetch all distinct values from the "language" field (e.g., ["go", "javascriptreact", "JAVA"])
+	// Fetch all distinct values from the "language" field (e.g., ["go", "javascriptreact", "JAVA"])
 	results := collection.Distinct(ctx, "language", bson.D{})
 
 	var languages []any
@@ -115,17 +116,17 @@ func RunLanguageMigration(mongoClient *mongo.Client, dbName, collectionName stri
 	updatedCategories := 0
 	totalLogsUpdated := int64(0)
 
-	// 2. Iterate through the distinct names found in your database
+	// Iterate through the distinct names found in your database
 	for _, rawLang := range languages {
 		oldLangStr, ok := rawLang.(string)
 		if !ok {
 			continue // Skip if null or structurally unexpected
 		}
 
-		// 3. Pass it to the function that uses enry.GetLanguageByAlias / Extension / Overrides
+		// Pass it to the function that uses enry.GetLanguageByAlias / Extension / Overrides
 		cleanLang := CleanTelemetryLanguage(oldLangStr)
 
-		// 4. Update documents in bulk if the string changed (e.g., "go" -> "Go")
+		// Update documents in bulk if the string changed (e.g., "go" -> "Go")
 		if oldLangStr != cleanLang {
 			filter := bson.M{"language": oldLangStr}
 			update := bson.M{"$set": bson.M{"language": cleanLang}}

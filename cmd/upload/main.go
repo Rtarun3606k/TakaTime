@@ -44,8 +44,22 @@ func main() {
 		log.Println("The flag language is deprecated. The lang now is detected from the file. Lang provided:", *language)
 	}
 
-	*language = utils.DetectLanguage(*file)
-	log.Printf("Detected language: %s. From file: %s", *language, *file)
+	matched, detectedLanguage, candidates, err := utils.DetectLanguage(*file)
+	if err != nil {
+		return
+	}
+
+	if matched {
+		*language = detectedLanguage
+		log.Printf("Detected language: %s", *language)
+	} else if len(candidates) > 0 {
+		*language = candidates[0]
+		log.Printf("Heuristics could not determine the language. Falling back to: %s", *language)
+		log.Printf("Possible languages: %v", candidates)
+	} else {
+		*language = "Unknown"
+		log.Printf("Unknown language")
+	}
 
 	var errr error
 	types.DB, errr = db.InitSQLite()
