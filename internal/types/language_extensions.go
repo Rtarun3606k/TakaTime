@@ -258,6 +258,7 @@ var ExtensionMap = map[string]string{
 	"dm":                   "DM",
 	"do":                   "Stata",
 	"dockerfile":           "Dockerfile",
+	"Dockerfile":           "Dockerfile",
 	"dof":                  "INI",
 	"doh":                  "Stata",
 	"dot":                  "Graphviz (DOT)",

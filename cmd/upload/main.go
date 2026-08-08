@@ -76,12 +76,13 @@ func main() {
 		gitBranch = ""
 	}
 
+	currentTime := time.Now()
 	entry := types.LogEntry{
 		FileName:  *file,
 		Project:   *project,
 		Duration:  *duration,
-		TimeStamp: time.Now(),
-		Date:      time.Now().Format("2006-01-02"),
+		TimeStamp: currentTime,
+		Date:      currentTime.Format("2006-01-02"),
 		Language:  *language,
 		Os:        utils.GetOS(),
 		GitBranch: gitBranch,

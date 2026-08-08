@@ -181,6 +181,7 @@ func DetectLanguage(path string) (bool, string, []string, error) {
 	filename := filepath.Base(path)
 
 	log.Printf("[Detect] File: %s", filename)
+	filename = strings.ToLower(filename)
 
 	// Layer 1: special filenames.
 	if lang, ok := types.ExtensionMap[filename]; ok {

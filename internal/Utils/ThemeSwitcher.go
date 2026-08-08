@@ -3,6 +3,7 @@ package utils
 import "github.com/Rtarun3606k/TakaTime/internal/types"
 
 func ThemeSwitcher(themeFlag string) types.ThemeConfig {
+
 	var theme types.ThemeConfig
 
 	theme = types.DefaultTheme()

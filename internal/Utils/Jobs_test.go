@@ -3,58 +3,92 @@ package utils
 import (
 	"errors"
 	"image"
-	"image/color"
 	"os"
 	"path/filepath"
 	"testing"
 )
 
 func TestSaveImage(t *testing.T) {
-	img := image.NewRGBA(image.Rect(0, 0, 10, 10))
-	img.Set(0, 0, color.RGBA{255, 0, 0, 255})
+	dir := t.TempDir()
 
-	file := filepath.Join(t.TempDir(), "test.png")
+	t.Run("Successful Save", func(t *testing.T) {
+		path := filepath.Join(dir, "test_output.png")
 
-	err := SaveImage(file, img)
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
+		// Create a tiny 10x10 blank image in memory
+		img := image.NewRGBA(image.Rect(0, 0, 10, 10))
 
-	info, err := os.Stat(file)
-	if err != nil {
-		t.Fatalf("expected file to exist: %v", err)
-	}
+		err := SaveImage(path, img)
+		if err != nil {
+			t.Fatalf("SaveImage() unexpected error: %v", err)
+		}
 
-	if info.Size() == 0 {
-		t.Fatal("image file is empty")
-	}
+		// Verify the file actually exists on disk
+		info, err := os.Stat(path)
+		if os.IsNotExist(err) {
+			t.Errorf("SaveImage() failed to write the file to disk")
+		}
+		if info.Size() == 0 {
+			t.Errorf("SaveImage() wrote an empty file")
+		}
+	})
+
+	t.Run("Directory Does Not Exist", func(t *testing.T) {
+		// Attempt to save to an invalid path that doesn't exist
+		path := filepath.Join(dir, "missing_folder", "fail.png")
+		img := image.NewRGBA(image.Rect(0, 0, 10, 10))
+
+		err := SaveImage(path, img)
+		if err == nil {
+			t.Errorf("SaveImage() expected an error for missing directory, got nil")
+		}
+	})
 }
 
-func TestSaveImageInvalidPath(t *testing.T) {
-	img := image.NewRGBA(image.Rect(0, 0, 10, 10))
+func TestHandleImageJob(t *testing.T) {
+	t.Run("Generator Failure Halts Execution", func(t *testing.T) {
+		generatorCalled := false
 
-	err := SaveImage("/invalid/path/test.png", img)
+		// Mock generator that immediately returns an error
+		mockFailingGenerator := func() (image.Image, error) {
+			generatorCalled = true
+			return nil, errors.New("mock generator failed") // make sure to import "errors" at the top!
+		}
 
-	if err == nil {
-		t.Fatal("expected error")
-	}
+		// Execute job - this should log the generation error and return early
+		HandleImageJob(
+			"Test-Fail-Job",
+			"fake/path.png",
+			"fake-token",
+			"fake-repo",
+			mockFailingGenerator,
+		)
+
+		if !generatorCalled {
+			t.Errorf("HandleImageJob() did not execute the injected generator function")
+		}
+	})
+
+	t.Run("Proceeds to Config on Successful Generation", func(t *testing.T) {
+		generatorCalled := false
+
+		// Mock generator that succeeds
+		mockSuccessGenerator := func() (image.Image, error) {
+			generatorCalled = true
+			return image.NewRGBA(image.Rect(0, 0, 10, 10)), nil
+		}
+
+		// Execute job with a properly formatted dummy repo string!
+		HandleImageJob(
+			"Test-Success-Job",
+			"fake/path.png",
+			"invalid-token",
+			"fake-owner/fake-repo", // <--- Correctly formatted!
+			mockSuccessGenerator,
+		)
+
+		if !generatorCalled {
+			t.Errorf("HandleImageJob() did not execute the injected generator function")
+		}
+	})
 }
 
-func TestHandleImageJobGeneratorError(t *testing.T) {
-	called := false
-
-	HandleImageJob(
-		"test-image",
-		"test.png",
-		"token",
-		"repo",
-		func() (image.Image, error) {
-			called = true
-			return nil, errors.New("generation failed")
-		},
-	)
-
-	if !called {
-		t.Fatal("generator function was not called")
-	}
-}
