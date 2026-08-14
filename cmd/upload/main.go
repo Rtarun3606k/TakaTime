@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
@@ -21,6 +22,8 @@ func main() {
 	language := flag.String("language", "unknown", "Language (Deprecated)")
 	editor := flag.String("editor", "unknown", "Editor Name NeoVim/VsCode")
 	versionFlag := flag.Bool("version", false, "show Version")
+	aiAcceptedCount := flag.Int("ai-accepted", 0, "Total count of accepted AI suggestions")
+	aiMetadataStr := flag.String("ai-metadata", "[]", "JSON string of AI completion events")
 
 	flag.Parse()
 
@@ -38,6 +41,32 @@ func main() {
 	err := debugger.SetupLog()
 	if err != nil {
 		log.Panic("Failed to initialize logger: ", err)
+	}
+
+	var aiEvents []types.AIMetadata
+	if *aiMetadataStr != "" {
+		err:= json.Unmarshal([]byte(*aiMetadataStr), &aiEvents)
+		if err!=nil {
+			return 
+		}
+	}
+	for _, event := range aiEvents {
+		matched, detectedLanguage, candidates, err := utils.DetectLanguage(event.FilePath)
+		if err != nil {
+			return
+		}
+		if matched {
+			event.Language = detectedLanguage
+			log.Printf("Detected language: %s", *language)
+		} else if len(candidates) > 0 {
+			event.Language = candidates[0]
+			log.Printf("Heuristics could not determine the language. Falling back to: %s", *language)
+			log.Printf("Possible languages: %v", candidates)
+		} else {
+			event.Language = "Unknown"
+			log.Printf("Unknown language")
+		}
+
 	}
 
 	if *language != "unknown" {
@@ -86,6 +115,7 @@ func main() {
 		Os:        utils.GetOS(),
 		GitBranch: gitBranch,
 		Editor:    *editor,
+		aiData:    aiEvents,
 	}
 
 	//  Always Save to Local DB First (Safety Net)

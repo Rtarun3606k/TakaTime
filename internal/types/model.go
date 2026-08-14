@@ -7,16 +7,26 @@ import (
 
 var DB *sql.DB
 
+type AIMetadata struct {
+	Provider string `json:"provider" bson:"provider"`
+	Char     int    `json:"char"     bson:"char"`
+	FilePath string `json:"file_path"     bson:"file_path"`
+	Language string `json:"language"     bson:"language"`
+}
+
+
+
 type LogEntry struct {
-	FileName  string    `bson:"name"`
-	Project   string    `bson:"project"`
-	TimeStamp time.Time `bson:"timestamp"`
-	Duration  float64   `bson:"duration"`
-	Date      string    `bson:"date"`
-	Language  string    `bson:"language"`
-	Os        string    `bson:"os"`
-	GitBranch string    `bson:"gitBranch"`
-	Editor    string    `bson:"editor"`
+	FileName  string       `bson:"name"`
+	Project   string       `bson:"project"`
+	TimeStamp time.Time    `bson:"timestamp"`
+	Duration  float64      `bson:"duration"`
+	Date      string       `bson:"date"`
+	Language  string       `bson:"language"`
+	Os        string       `bson:"os"`
+	GitBranch string       `bson:"gitBranch"`
+	Editor    string       `bson:"editor"`
+	aiData    []AIMetadata `bson:"aiData"`
 }
 
 type StatItem struct {

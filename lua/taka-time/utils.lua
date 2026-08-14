@@ -182,4 +182,18 @@ function M.is_ignored(current_dir)
 	return false
 end
 
+function M.get_buffer_language(file_path)
+  if not file_path or file_path == "" then
+    return "Plain Text"
+  end
+  local ft = vim.bo.filetype
+  if ft and ft ~= "" then
+    -- Pass through your language detection logic or capitalization
+    return ft:sub(1,1):upper() .. ft:sub(2)
+  end
+  return "Plain Text"
+end
+
 return M
+
+
