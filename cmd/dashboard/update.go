@@ -74,7 +74,7 @@ func fetchData(uri string, fallbackTheme types.ThemeConfig) tea.Cmd {
 		tempModel := Model{TUITheme: activeTheme}
 		filledModel, _, err := tempModel.GetData(uri)
 
-		// 👉 NEW 3: Attach styles to the Cache MISS model before returning it
+		// Attach styles to the Cache MISS model before returning it
 		filledModel.AppStyles = loadedStyles
 
 		if err != nil {

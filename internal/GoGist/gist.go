@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/google/go-github/v57/github" 
+	"github.com/google/go-github/v57/github"
 	"golang.org/x/oauth2"
 )
 
@@ -32,7 +32,7 @@ func UpdateGist(token string, gistID string, content string) error {
 
 	_, _, err := client.Gists.Edit(ctx, gistID, gist)
 	if err != nil {
-		log.Fatalln("Some error occured during editing gist", err)
+		log.Println("Some error occured during editing gist", err)
 		return err
 	}
 
@@ -54,13 +54,13 @@ func UpdateReadMe(githubToken string, repoName string, content string) error {
 	getReadMeFileContent, _, _, err := ghClient.Repositories.GetContents(ctx, splitRepoName[0], splitRepoName[1], path, nil)
 
 	if err != nil {
-		log.Fatalln("Could not get filecontents ", err)
+		log.Println("Could not get filecontents ", err)
 		return err
 	}
 
 	currentText, err := getReadMeFileContent.GetContent()
 	if err != nil {
-		log.Fatalln("Could not get filecontents ", err)
+		log.Println("Could not get filecontents ", err)
 		return err
 	}
 
@@ -95,7 +95,7 @@ func UpdateReadMe(githubToken string, repoName string, content string) error {
 
 	_, _, err = ghClient.Repositories.UpdateFile(ctx, splitRepoName[0], splitRepoName[1], path, opts)
 	if err != nil {
-		log.Fatalln("Error occured during updaing file contents ", err)
+		log.Println("Error occured during updaing file contents ", err)
 		return err
 	}
 

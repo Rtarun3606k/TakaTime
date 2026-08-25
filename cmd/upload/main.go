@@ -13,7 +13,6 @@ import (
 	"github.com/Rtarun3606k/TakaTime/internal/types"
 )
 
-// pes2ug23cs645
 func main() {
 	uri := flag.String("uri", "", "MongoDB Atlas Connection URI")
 	project := flag.String("project", "unknown", "Project Name")
@@ -45,8 +44,22 @@ func main() {
 		log.Println("The flag language is deprecated. The lang now is detected from the file. Lang provided:", *language)
 	}
 
-	*language = utils.DetectLanguage(*file)
-	log.Printf("Detected language: %s. From file: %s", *language, *file)
+	matched, detectedLanguage, candidates, err := utils.DetectLanguage(*file)
+	if err != nil {
+		return
+	}
+
+	if matched {
+		*language = detectedLanguage
+		log.Printf("Detected language: %s", *language)
+	} else if len(candidates) > 0 {
+		*language = candidates[0]
+		log.Printf("Heuristics could not determine the language. Falling back to: %s", *language)
+		log.Printf("Possible languages: %v", candidates)
+	} else {
+		*language = "Unknown"
+		log.Printf("Unknown language")
+	}
 
 	var errr error
 	types.DB, errr = db.InitSQLite()
@@ -55,16 +68,6 @@ func main() {
 	}
 	defer types.DB.Close()
 
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
-	//
-	// client, err := db.ConnectToDataBase(*uri)
-	// if err != nil {
-	// 	log.Fatalln("Counld not connect to mongo db", err)
-	// }
-	//
-	// collection := client.Database("takatime").Collection("logs")
-	//
 	fileDir := filepath.Dir(*file)
 
 	gitBranch, err := utils.GetGitBranch(fileDir)
@@ -73,22 +76,20 @@ func main() {
 		gitBranch = ""
 	}
 
+	currentTime := time.Now()
 	entry := types.LogEntry{
 		FileName:  *file,
 		Project:   *project,
 		Duration:  *duration,
-		TimeStamp: time.Now(),
-		Date:      time.Now().Format("2006-01-02"),
+		TimeStamp: currentTime,
+		Date:      currentTime.Format("2006-01-02"),
 		Language:  *language,
 		Os:        utils.GetOS(),
 		GitBranch: gitBranch,
 		Editor:    *editor,
 	}
-	log.Printf("file: %s , project : %s , duration : %f , Language : %s , Gitbrach : %s , editor : %s ", *file, *project, duration, *language, gitBranch, *editor)
 
-	// _, err = collection.InsertOne(ctx, entry)
-
-	// 6. STEP 1: Always Save to Local DB First (Safety Net)
+	//  Always Save to Local DB First (Safety Net)
 	if err := db.Enqueue(entry, types.DB); err != nil {
 		log.Printf("Failed to save offline: %v", err)
 		// If we can't save to disk, we probably shouldn't continue
@@ -96,7 +97,7 @@ func main() {
 	}
 	log.Printf("Saved log for '%s' to offline queue.", *file)
 
-	// 7. STEP 2: The Sync Loop (Drain the Queue)
+	// The Sync Loop (Drain the Queue)
 	// We assume *uri is valid here. If empty, we just skip syncing.
 	if *uri != "" {
 		db.SyncQueue(*uri, types.DB)

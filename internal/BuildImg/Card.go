@@ -42,7 +42,10 @@ func DrawListCard(title string, stats []types.ListStats, fontData []byte, update
 		return nil, err
 	}
 
-	listFace, _ := loadFontFace(fontData, 48)
+	listFace, err := loadFontFace(fontData, 48)
+	if err != nil {
+		return nil, err
+	}
 	dc.SetFontFace(listFace)
 
 	startY := 200.0
@@ -110,7 +113,10 @@ func DrawTimeCard(data types.TimeGridStruct, fontData []byte, updatedAt time.Tim
 
 	// FIXED: Manually Draw Title at Top-Left (20, 45) instead of Center
 	// This prevents it from crashing into the columns
-	headerFace, _ := loadFontFace(fontData, 35)
+	headerFace, err := loadFontFace(fontData, 35)
+	if err != nil {
+		return nil, err
+	}
 	dc.SetFontFace(headerFace)
 	dc.SetHexColor(theme.TextColor)
 	title := ""
@@ -128,8 +134,14 @@ func DrawTimeCard(data types.TimeGridStruct, fontData []byte, updatedAt time.Tim
 
 	dc.DrawString(title, x, y)
 	// Fonts
-	labelFace, _ := loadFontFace(fontData, 20)
-	valFace, _ := loadFontFace(fontData, 42)
+	labelFace, err := loadFontFace(fontData, 20)
+	if err != nil {
+		return nil, err
+	}
+	valFace, err := loadFontFace(fontData, 42)
+	if err != nil {
+		return nil, err
+	}
 
 	drawColumn := func(x float64, label, val, colorHex string) {
 		// Label
@@ -180,7 +192,10 @@ func DrawTechCard(editors []types.ListStats, osSystems []types.ListStats, fontDa
 	osSystems = filterUnknown(osSystems)
 
 	// Sub-headers
-	subHeaderFace, _ := loadFontFace(fontData, 36)
+	subHeaderFace, err := loadFontFace(fontData, 36)
+	if err != nil {
+		return nil, err
+	}
 	dc.SetFontFace(subHeaderFace)
 
 	// Shifted Right Column Start: 650 -> 700 to create a safety gap
@@ -190,8 +205,11 @@ func DrawTechCard(editors []types.ListStats, osSystems []types.ListStats, fontDa
 	dc.SetHexColor(theme.Color2)
 	dc.DrawString("Operating Systems", 900, 190)
 
-	drawMini := func(list []types.ListStats, xOffset float64) {
-		smallFace, _ := loadFontFace(fontData, 30)
+	drawMini := func(list []types.ListStats, xOffset float64) error {
+		smallFace, err := loadFontFace(fontData, 30)
+		if err != nil {
+			return err
+		}
 		dc.SetFontFace(smallFace)
 
 		startY := 260.0
@@ -230,13 +248,18 @@ func DrawTechCard(editors []types.ListStats, osSystems []types.ListStats, fontDa
 			dc.SetHexColor(theme.TextColor)
 			dc.DrawString(fmt.Sprintf("%.0f%%", item.Percent*100), barStartX+barW+25, y)
 		}
+		return nil
 	}
 
 	// Draw Left (Editors)
-	drawMini(editors, 50)
+	if err := drawMini(editors, 50); err != nil {
+		return nil, err
+	}
 
 	// Draw Right (OS) - Start further right at 700
-	drawMini(osSystems, 900)
+	if err := drawMini(osSystems, 900); err != nil {
+		return nil, err
+	}
 
 	gogist.DrawFooter(dc, fontData, theme, updatedAt)
 	return dc.Image(), nil

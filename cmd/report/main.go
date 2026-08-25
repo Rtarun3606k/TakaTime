@@ -109,12 +109,16 @@ func main() {
 
 		if err := dbqueryv2.RunMigrations(client); err != nil {
 			log.Printf("Migration warning: %v", err)
-			// Don't crash, just log it. The report can still run.
+		}
+
+		if err := dbqueryv2.RunLanguageMigration(client, "takatime", "logs"); err != nil {
+			log.Printf("Migration warning: %v", err)
+
 		}
 
 		name := strings.Split(targetRepo, "/")
 
-		// 1. Fetch Real Data for all time all time days = 0 else the count
+		//  Fetch Real Data for all time all time days = 0 else the count
 		projects, err := dbqueryv2.GetListStats(client, "project", 5, theme, 0)
 		if err != nil {
 			log.Println("Proj Error:", err)
@@ -162,7 +166,7 @@ func main() {
 
 		// job 1 : Languages
 		utils.HandleImageJob("Top Languages - All Time", "public/taka-languages.png", gistToken, targetRepo, func() (image.Image, error) {
-			return buildimg.DrawListCard("Top Languages - All Time", langs, fontData, time.Now(), theme, false)
+			return buildimg.DrawListCard("Top Languages - All Time", langs, fontData, time.Now(), theme, true)
 		})
 
 		// Job 2: Projects
@@ -206,13 +210,5 @@ func main() {
 	} else {
 		fmt.Println("Skipping README update (GIST_TOKEN or TARGET_REPO missing)")
 	}
-
-	//
-	// updateContentError := gogist.UpdateGist(gistToken, gistID, content)
-	// if updateContentError != nil {
-	// 	log.Fatalln("Some error occured gogist", updateContentError)
-	// 	return
-	// }
-	//
 
 }
