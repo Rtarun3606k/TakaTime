@@ -5,7 +5,7 @@ const path = require("path");
 const os = require("os");
 
 // CHANGE THIS TO v2.0.4
-const CURRENT_VERSION = "v2.2.4";
+const CURRENT_VERSION = "v2.3.0";
 
 function getConfig() {
   const homeDir = os.homedir();

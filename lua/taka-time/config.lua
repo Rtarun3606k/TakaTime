@@ -2,7 +2,7 @@ local M = {}
 
 -- all defaults configs
 M.defaults = {
-	binary_version = "v2.2.4",
+	binary_version = "v2.3.0",
 
 	mongo_uri = "",
 
@@ -10,7 +10,6 @@ M.defaults = {
 
 	debug = false,
 	ignore_repos = {},
-
 }
 
 M.options = {}
