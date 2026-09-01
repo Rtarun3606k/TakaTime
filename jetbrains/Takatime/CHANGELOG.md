@@ -1,15 +1,20 @@
+## [2.2.7] - 2026-08-31
+
+### Added
+
+- changed version
+
 ## [2.2.6] - 2026-05-21
 
 ### Added
-- logo for plugin
 
+- logo for plugin
 
 ## [2.2.5] - 2026-05-21
 
 ### Fixed
 
 - Fixed JetBrains document listener lifecycle handling to prevent invalid listener removal exceptions when closing editors or split tabs.
-
 
 ## [2.2.4] - 2026-05-20
 
