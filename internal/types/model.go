@@ -7,6 +7,8 @@ import (
 
 var DB *sql.DB
 
+const UnknownLanguage = "Unknown"
+
 type LogEntry struct {
 	FileName  string    `bson:"name"`
 	Project   string    `bson:"project"`
