@@ -23,7 +23,7 @@ func HandleImageJob(name, path, token, repo string, generator func() (image.Imag
 	}
 
 	//debugging image generation
-	//SaveImage(name+".png", img)
+	SaveImage(name+".png", img)
 
 	// 2. Format Config (Using your utils package)
 	cfg, err := FormmatUpload(token, repo, path, "main", "Update "+name)
