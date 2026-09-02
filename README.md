@@ -89,6 +89,7 @@
   <img src="./public/taka-projects30.png" width="400" alt="Projects" /><br/>
   <img src="./public/taka-languages.png" width="400" alt="Languages" />
   <img src="./public/taka-projects.png" width="400" alt="Projects" /><br/>
+  <img src="./public/taka-heatmap.png" width="100%" alt="Heatmap" />
   <img src="./public/taka-tech.png" width="100%" alt="Tech Stack" />
 </p>
 
