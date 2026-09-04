@@ -2,7 +2,7 @@ package com.takatime.jetbrains
 import java.io.File
 
 
-const val TAKATIME_VERSION = "v2.3.0"
+const val TAKATIME_VERSION = "v2.3.1"
 
 
 

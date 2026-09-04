@@ -2,7 +2,7 @@ local M = {}
 
 -- all defaults configs
 M.defaults = {
-  binary_version = "v2.3.0",
+  binary_version = "v2.3.1",
 
   mongo_uri = "",
 
