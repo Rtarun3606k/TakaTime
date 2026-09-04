@@ -18,7 +18,7 @@ func main() {
 	project := flag.String("project", "unknown", "Project Name")
 	file := flag.String("file", "", "File Name")
 	duration := flag.Float64("duration", 0, "Duration in seconds")
-	language := flag.String("language", "unknown", "Language (Deprecated)")
+	language := flag.String("language", types.UnknownLanguage, "Language (Deprecated)")
 	editor := flag.String("editor", "unknown", "Editor Name NeoVim/VsCode")
 	versionFlag := flag.Bool("version", false, "show Version")
 
@@ -40,7 +40,7 @@ func main() {
 		log.Panic("Failed to initialize logger: ", err)
 	}
 
-	if *language != "unknown" {
+	if *language != types.UnknownLanguage {
 		log.Println("The flag language is deprecated. The lang now is detected from the file. Lang provided:", *language)
 	}
 
@@ -57,7 +57,7 @@ func main() {
 		log.Printf("Heuristics could not determine the language. Falling back to: %s", *language)
 		log.Printf("Possible languages: %v", candidates)
 	} else {
-		*language = "Unknown"
+		*language = types.UnknownLanguage
 		log.Printf("Unknown language")
 	}
 

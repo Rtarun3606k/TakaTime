@@ -132,7 +132,7 @@ var AmbiguousExtensionMap = map[string][]string{
 	"res":        []string{"ReScript", "XML"},
 	"rno":        []string{"RUNOFF", "Roff"},
 	"rpy":        []string{"Python", "Ren'Py"},
-	"rs":         []string{"RenderScript", "Rust", "XML"},
+	"rs":         []string{"Rust", "RenderScript", "XML"},
 	"rsc":        []string{"Rascal", "RouterOS Script"},
 	"s":          []string{"Assembly", "Motorola 68K Assembly", "Unix Assembly"},
 	"sc":         []string{"Scala", "SuperCollider"},
