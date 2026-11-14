@@ -19,8 +19,6 @@ class TakaTimeSaveListener : FileDocumentManagerListener {
 // 2. Typing Listener
 class TakaTimeEditorFactoryListener : EditorFactoryListener {
 
-    private val attachedDocuments = WeakHashMap<Document, Boolean>()
-
     private val typingListener = object : DocumentListener {
         override fun documentChanged(e: DocumentEvent) {
             TakaTimeHeartbeat.handleHeartbeat(e.document)
@@ -28,30 +26,16 @@ class TakaTimeEditorFactoryListener : EditorFactoryListener {
     }
 
     override fun editorCreated(event: EditorFactoryEvent) {
-        val document = event.editor.document
+        val editor = event.editor
+        TakaTimeBinaryManager.checkAndDownloadIfNeeded(editor.project)
 
-        TakaTimeBinaryManager.checkAndDownloadIfNeeded(
-            event.editor.project
-        )
+        // JetBrains 2026.2+ compatibility: use a disposable-based registration
+        // so the listener is removed when the project/editor is disposed.
+        editor.document.addDocumentListener(typingListener, editor.disposable)
 
-        if (!attachedDocuments.containsKey(document)) {
-            document.addDocumentListener(typingListener)
-            attachedDocuments[document] = true
-        }
     }
 
     override fun editorReleased(event: EditorFactoryEvent) {
-        val document = event.editor.document
-
-        val editors = EditorFactory
-            .getInstance()
-            .getEditors(document)
-
-        if (editors.size <= 1 &&
-            attachedDocuments.containsKey(document)
-        ) {
-            document.removeDocumentListener(typingListener)
-            attachedDocuments.remove(document)
-        }
+        // Listener lifecycle is now managed by the disposable, so this is no longer needed.
     }
 }
