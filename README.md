@@ -127,6 +127,29 @@ TakaTime includes a fully interactive, offline-first terminal dashboard directly
 
 </div>
 
+## Neovim — lazy.nvim Setup
+
+\```lua
+{
+  "Rtarun3606k/TakaTime",
+  event = { "BufReadPost", "BufWritePost", "BufEnter" },
+  build = function()
+    -- Downloads and installs the correct Go binary for your platform
+    require("taka-time").install_binary()
+  end,
+  opts = {
+    sync_interval = 120,    -- seconds between non-write heartbeats
+    theme = "catppuccin",   -- terminal dashboard theme
+  },
+  config = function(_, opts)
+    require("taka-time").setup(opts)
+  end,
+}
+\```
+
+> **Note on `build`:** The `build` hook runs once after install/update.
+> If `install_binary()` is not yet implemented, you can install the binary
+> manually — see [INSTALL.md](../INSTALL.md).
 
 ---
 
